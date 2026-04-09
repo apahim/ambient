@@ -4,3 +4,4 @@
 # Reports directory is intentionally tracked in git.
 # Agent sessions write reports here and autoPush commits them.
 # Do NOT add reports/ to .gitignore.
+.idea/
