@@ -19,6 +19,11 @@
         "url": "https://github.com/apahim/ambient",
         "branch": "main",
         "autoPush": true
+      },
+      {
+        "url": "https://github.com/apahim/gcp-hcp",
+        "branch": "main",
+        "autoPush": false
       }
     ],
     "activeWorkflow": {

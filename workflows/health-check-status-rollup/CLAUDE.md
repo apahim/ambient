@@ -6,6 +6,17 @@ You are running a **Stage 1 (Read-Only) Architecture Health Check** for the GCP 
 
 Your job: generate a weekly status rollup report from Jira and save it to this repo.
 
+## Available Repositories
+
+Your workspace has two repos cloned:
+
+| Repo | Path | Access | Purpose |
+|------|------|--------|---------|
+| **ambient** | Working directory | Read-write | Save reports here |
+| **gcp-hcp** | Sibling directory | **Read-only** | Architecture decisions, implementation plans, skills, team conventions. Contains `CLAUDE.md`, `.claude/settings.json`, and the upstream Jira plugin configuration. |
+
+The gcp-hcp repo provides context for interpreting Jira data (e.g., mapping tickets to design decisions or implementation plans). Use it as reference but do NOT modify it.
+
 ## Constraints
 
 - **Read-only**: You MUST NOT create, modify, transition, or close any Jira tickets.
