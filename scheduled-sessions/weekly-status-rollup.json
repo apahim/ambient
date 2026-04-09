@@ -2,7 +2,7 @@
   "schedule": "0 14 * * 5",
   "displayName": "GCP HCP Weekly Status Rollup",
   "sessionRequest": {
-    "task": "",
+    "task": "Run the weekly status rollup workflow.",
     "displayName": "Weekly Status Rollup",
     "model": "claude-sonnet-4-20250514",
     "timeout": 2400,
