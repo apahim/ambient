@@ -7,7 +7,7 @@
     "initialPrompt": "Run the weekly status rollup workflow.",
     "displayName": "Weekly Status Rollup",
     "llmSettings": {
-      "model": "claude-sonnet-4-20250514",
+      "model": "claude-sonnet-4-5",
       "temperature": 0,
       "maxTokens": 8192
     },
