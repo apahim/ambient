@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(jira)",
+      "Read",
+      "Write",
+      "Glob",
+      "Grep",
+      "Bash(ls)",
+      "Bash(date)",
+      "Bash(mkdir)"
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "openshift-ai-helpers": {
+      "source": {
+        "source": "github",
+        "repo": "openshift-eng/ai-helpers"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "jira@ai-helpers": true
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Health Check Status Rollup",
+  "description": "Weekly read-only health check that generates a Jira status rollup for the GCP HCP project. Stage 1 automation per architecture-workflow.md.",
+  "systemPrompt": "You are an architecture health check agent for the GCP HCP project. Your role is read-only: query Jira, analyze project state, and produce a status rollup report. You MUST NOT create, modify, or close any Jira tickets. You MUST NOT push code changes to any repository other than this ambient workflows repo.",
+  "startupPrompt": "Generate a weekly status rollup for the GCP project (Jira project key: GCP). Steps:\n\n1. Use the jira:status-rollup skill to generate a status rollup for the GCP project covering the last 7 days.\n2. Save the report as a markdown file at reports/YYYY-MM-DD-status-rollup.md (use today's date).\n3. The report should include: ticket status changes, open/closed counts, stale items (no update in >14 days), and any blockers.\n\nDo NOT create or modify any Jira tickets. This is a read-only operation.",
+  "results": {
+    "status-rollup": "reports/*-status-rollup.md"
+  }
+}
