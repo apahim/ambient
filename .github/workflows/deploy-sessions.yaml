@@ -1,4 +1,4 @@
-name: Deploy Scheduled Sessions to ACP
+name: Deploy Sessions to ACP
 
 on:
   push:
@@ -25,14 +25,11 @@ jobs:
         id: files
         run: |
           if [ -n "${{ inputs.session_file }}" ]; then
-            # Manual dispatch with specific file
             echo "files=scheduled-sessions/${{ inputs.session_file }}" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" = "push" ]; then
-            # Auto-deploy: find changed session files
             CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'scheduled-sessions/*.json' | tr '\n' ' ')
             echo "files=$CHANGED" >> "$GITHUB_OUTPUT"
           else
-            # Manual dispatch without specific file: deploy all
             CHANGED=$(ls scheduled-sessions/*.json 2>/dev/null | tr '\n' ' ')
             echo "files=$CHANGED" >> "$GITHUB_OUTPUT"
           fi
@@ -42,6 +39,7 @@ jobs:
         env:
           ACP_API: ${{ secrets.ACP_API }}
           ACP_TOKEN: ${{ secrets.ACP_TOKEN }}
+          ACP_PROJECT: ${{ secrets.ACP_PROJECT }}
         run: |
           for file in ${{ steps.files.outputs.files }}; do
             if [ ! -f "$file" ]; then
@@ -52,22 +50,24 @@ jobs:
             NAME=$(jq -r '.displayName' "$file")
             echo "Deploying: $NAME ($file)"
 
+            # Extract the sessionRequest payload for the public API
+            PAYLOAD=$(jq -r '.sessionRequest' "$file")
+
             RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
-              "$ACP_API/scheduled-sessions" \
+              "$ACP_API/v1/sessions" \
               -H "Authorization: Bearer $ACP_TOKEN" \
+              -H "X-Ambient-Project: $ACP_PROJECT" \
               -H "Content-Type: application/json" \
-              -d @"$file")
+              -d "$PAYLOAD")
 
             HTTP_CODE=$(echo "$RESPONSE" | tail -1)
             BODY=$(echo "$RESPONSE" | head -n -1)
 
             if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-              echo "Deployed successfully (HTTP $HTTP_CODE)"
-              echo "$BODY" | jq '{name: .name, schedule: .schedule, displayName: .displayName}' 2>/dev/null || true
-            elif [ "$HTTP_CODE" -eq 409 ]; then
-              echo "::notice::Session '$NAME' already exists (HTTP 409). Delete and recreate if you need to update it."
+              echo "Session created successfully (HTTP $HTTP_CODE)"
+              echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
             else
-              echo "::error::Failed to deploy '$NAME' (HTTP $HTTP_CODE)"
+              echo "::error::Failed to create session '$NAME' (HTTP $HTTP_CODE)"
               echo "$BODY"
               exit 1
             fi
