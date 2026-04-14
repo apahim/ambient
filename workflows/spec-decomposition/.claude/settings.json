@@ -16,6 +16,9 @@
       "mcp__atlassian__jira_get_link_types"
     ]
   },
+  "enabledMcpjsonServers": [
+    "atlassian"
+  ],
   "extraKnownMarketplaces": {
     "openshift-ai-helpers": {
       "source": {
