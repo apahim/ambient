@@ -25,81 +25,81 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 ## Jira REST API
 
 Jira access uses direct REST API calls via `curl` with bearer token
-authentication. Credentials are provided by environment variables -- do NOT
-hardcode tokens or ask the user for credentials.
+authentication. The token is provided by the `JIRA_PERSONAL_TOKEN`
+environment variable. Do NOT hardcode tokens or ask the user for credentials.
 
 ### Authentication
 
-All requests use:
+All requests use bearer token auth against `https://issues.redhat.com`:
 
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
-     "$JIRA_URL/rest/api/2/..."
+     "https://issues.redhat.com/rest/api/2/..."
 ```
 
 ### API Operations
 
 **Search issues (JQL):**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "$JIRA_URL/rest/api/2/search?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
+     "https://issues.redhat.com/rest/api/2/search?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
 ```
 
 **Get issue with all fields:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "$JIRA_URL/rest/api/2/issue/<KEY>"
+     "https://issues.redhat.com/rest/api/2/issue/<KEY>"
 ```
 
 **Get issue comments:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "$JIRA_URL/rest/api/2/issue/<KEY>/comment"
+     "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Create issue:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d '{"fields": {...}}' \
-     "$JIRA_URL/rest/api/2/issue"
+     "https://issues.redhat.com/rest/api/2/issue"
 ```
 
 **Update issue:**
 ```bash
-curl -s -X PUT -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
-     "$JIRA_URL/rest/api/2/issue/<KEY>" \
+     "https://issues.redhat.com/rest/api/2/issue/<KEY>" \
      -d '{"fields": {...}}'
 ```
 
 **Add comment:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"body": "comment text"}' \
-     "$JIRA_URL/rest/api/2/issue/<KEY>/comment"
+     "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Get link types:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "$JIRA_URL/rest/api/2/issueLinkType"
+     "https://issues.redhat.com/rest/api/2/issueLinkType"
 ```
 
 **Create issue link:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"type": {"name": "Blocks"}, "inwardIssue": {"key": "..."}, "outwardIssue": {"key": "..."}}' \
-     "$JIRA_URL/rest/api/2/issueLink"
+     "https://issues.redhat.com/rest/api/2/issueLink"
 ```
 
 ### Important Notes
@@ -112,7 +112,7 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
 
 ## Jira Configuration
 
-- **Instance**: Value of `$JIRA_URL` environment variable
+- **Instance**: https://issues.redhat.com
 - **Project key**: GCP
 - **Contact**: asegundo@redhat.com
 
