@@ -22,6 +22,29 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 - All created issues MUST have label `ai-generated-jira` and security `{"name": "Red Hat Employee"}`
 - Use Jira wiki markup (`h2.`, `*`, `{code}`), NOT markdown (`##`, `-`, `` ``` ``)
 
+## Jira MCP Tools
+
+Jira access is provided by the platform's `mcp-atlassian` MCP server (connected
+via the Ambient Jira integration). The tools are deferred and must be loaded
+explicitly before use.
+
+**MANDATORY first step** -- load the Jira tools by running:
+
+```
+ToolSearch("select:mcp__mcp-atlassian__jira_search,mcp__mcp-atlassian__jira_get_issue,mcp__mcp-atlassian__jira_create_issue,mcp__mcp-atlassian__jira_update_issue,mcp__mcp-atlassian__jira_add_comment,mcp__mcp-atlassian__jira_create_issue_link,mcp__mcp-atlassian__jira_get_link_types")
+```
+
+If the select query returns no matches, try a broader search:
+
+```
+ToolSearch("+mcp-atlassian", 20)
+```
+
+Do NOT search for tools using generic keywords like "jira" -- that will not find
+MCP tools. Do NOT write Python scripts or curl commands to access the Jira API.
+Do NOT ask the user to configure credentials. The tools are provided by the
+platform integration.
+
 ## Jira Configuration
 
 - **Instance**: https://issues.redhat.com (Cloud: redhat.atlassian.net)
