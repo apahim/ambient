@@ -1,0 +1,56 @@
+{
+  "schedule": "*/30 * * * *",
+  "displayName": "GCP HCP Spec Agent Label Poll",
+  "suspend": false,
+  "reuseLastSession": false,
+  "sessionTemplate": {
+    "initialPrompt": "Run the spec decomposition workflow.",
+    "displayName": "Spec Agent Poll",
+    "llmSettings": {
+      "model": "claude-sonnet-4-5",
+      "temperature": 0,
+      "maxTokens": 32768
+    },
+    "timeout": 1200,
+    "inactivityTimeout": 300,
+    "stopOnRunFinished": true,
+    "repos": [
+      {
+        "url": "https://github.com/apahim/ambient",
+        "branch": "main",
+        "autoPush": false
+      },
+      {
+        "url": "https://github.com/apahim/gcp-hcp",
+        "branch": "ai-sdlc",
+        "autoPush": false
+      }
+    ],
+    "activeWorkflow": {
+      "gitUrl": "https://github.com/apahim/ambient",
+      "branch": "main",
+      "path": "workflows/spec-decomposition"
+    },
+    "mcpServers": {
+      "custom": {
+        "atlassian": {
+          "command": "npx",
+          "args": ["-y", "@anthropic/mcp-atlassian"],
+          "env": {
+            "JIRA_URL": "https://redhat.atlassian.net",
+            "JIRA_USERNAME": "${JIRA_USERNAME}",
+            "JIRA_API_TOKEN": "${JIRA_API_TOKEN}"
+          }
+        }
+      }
+    },
+    "environmentVariables": {
+      "JIRA_EMAIL": "asegundo@redhat.com"
+    },
+    "labels": {
+      "team": "gcp-hcp",
+      "stage": "2",
+      "activity": "spec-decomposition"
+    }
+  }
+}
