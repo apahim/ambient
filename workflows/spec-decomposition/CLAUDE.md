@@ -30,10 +30,11 @@ environment variable. Do NOT hardcode tokens or ask the user for credentials.
 
 ### Authentication
 
-All requests use bearer token auth against `https://issues.redhat.com`:
+All requests use bearer token auth against `https://issues.redhat.com`.
+Always use `curl -sL` (follow redirects — the server may 301 to `redhat.atlassian.net`):
 
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      "https://issues.redhat.com/rest/api/2/..."
@@ -41,30 +42,30 @@ curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 ### API Operations
 
-**Search issues (JQL):**
+**Search issues (JQL)** — uses the v3 endpoint (v2 `/search` has been removed):
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/2/search?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
+     "https://issues.redhat.com/rest/api/3/search/jql?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
 ```
 
 **Get issue with all fields:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://issues.redhat.com/rest/api/2/issue/<KEY>"
 ```
 
 **Get issue comments:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Create issue:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d '{"fields": {...}}' \
@@ -73,7 +74,7 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Update issue:**
 ```bash
-curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      "https://issues.redhat.com/rest/api/2/issue/<KEY>" \
      -d '{"fields": {...}}'
@@ -81,7 +82,7 @@ curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Add comment:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"body": "comment text"}' \
      "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
@@ -89,14 +90,14 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Get link types:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://issues.redhat.com/rest/api/2/issueLinkType"
 ```
 
 **Create issue link:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"type": {"name": "Blocks"}, "inwardIssue": {"key": "..."}, "outwardIssue": {"key": "..."}}' \
      "https://issues.redhat.com/rest/api/2/issueLink"
@@ -104,6 +105,9 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 ### Important Notes
 
+- Always use `curl -sL` — the `-L` flag follows 301 redirects from `issues.redhat.com` to `redhat.atlassian.net`
+- The search endpoint MUST use `/rest/api/3/search/jql` (the v2 `/rest/api/2/search` has been removed by Atlassian)
+- Other endpoints (issue CRUD, comments, links) still work on `/rest/api/2/`
 - Always URL-encode JQL query strings
 - Use `jq` to parse JSON responses when needed
 - For large JSON payloads (issue creation), use a heredoc: `curl ... -d "$(cat <<'EOF' ... EOF)"`
