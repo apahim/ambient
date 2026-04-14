@@ -1,6 +1,6 @@
 # GCP HCP Ambient Workflows
 
-Agentic workflow definitions for the GCP HCP architecture lifecycle, designed for the [Ambient Code Platform](https://github.com/ambient-code) (ACP).
+Agentic workflow definitions for the GCP HCP architecture lifecycle, designed for the [Ambient Code Platform](https://github.com/ambient-code) (ACP)
 
 ## Relationship to gcp-hcp
 
