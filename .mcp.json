@@ -2,18 +2,10 @@
   "mcpServers": {
     "atlassian": {
       "type": "stdio",
-      "command": "podman",
+      "command": "npx",
       "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "JIRA_URL",
-        "-e",
-        "JIRA_USERNAME",
-        "-e",
-        "JIRA_API_TOKEN",
-        "ghcr.io/sooperset/mcp-atlassian:latest"
+        "-y",
+        "@anthropic/mcp-atlassian"
       ],
       "env": {
         "JIRA_URL": "https://redhat.atlassian.net",
