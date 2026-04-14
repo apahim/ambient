@@ -24,20 +24,20 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 
 ## Jira MCP Tools
 
-Jira access is provided by the platform's `mcp-atlassian` MCP server (connected
-via the Ambient Jira integration). The tools are deferred and must be loaded
-explicitly before use.
+Jira access is provided by the `atlassian` MCP server (connected via the
+Ambient Jira integration). The tools are deferred and must be loaded explicitly
+before use.
 
 **MANDATORY first step** -- load the Jira tools by running:
 
 ```
-ToolSearch("select:mcp__mcp-atlassian__jira_search,mcp__mcp-atlassian__jira_get_issue,mcp__mcp-atlassian__jira_create_issue,mcp__mcp-atlassian__jira_update_issue,mcp__mcp-atlassian__jira_add_comment,mcp__mcp-atlassian__jira_create_issue_link,mcp__mcp-atlassian__jira_get_link_types")
+ToolSearch("select:mcp__atlassian__jira_search,mcp__atlassian__jira_get_issue,mcp__atlassian__jira_create_issue,mcp__atlassian__jira_update_issue,mcp__atlassian__jira_add_comment,mcp__atlassian__jira_create_issue_link,mcp__atlassian__jira_get_link_types")
 ```
 
 If the select query returns no matches, try a broader search:
 
 ```
-ToolSearch("+mcp-atlassian", 20)
+ToolSearch("+atlassian", 20)
 ```
 
 Do NOT search for tools using generic keywords like "jira" -- that will not find
