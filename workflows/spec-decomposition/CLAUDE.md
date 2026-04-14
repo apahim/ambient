@@ -22,32 +22,97 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 - All created issues MUST have label `ai-generated-jira` and security `{"name": "Red Hat Employee"}`
 - Use Jira wiki markup (`h2.`, `*`, `{code}`), NOT markdown (`##`, `-`, `` ``` ``)
 
-## Jira MCP Tools
+## Jira REST API
 
-Jira access is provided by the `atlassian` MCP server (connected via the
-Ambient Jira integration). The tools are deferred and must be loaded explicitly
-before use.
+Jira access uses direct REST API calls via `curl` with bearer token
+authentication. Credentials are provided by environment variables -- do NOT
+hardcode tokens or ask the user for credentials.
 
-**MANDATORY first step** -- load the Jira tools by running:
+### Authentication
 
+All requests use:
+
+```bash
+curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     "$JIRA_URL/rest/api/2/..."
 ```
-ToolSearch("select:mcp__atlassian__jira_search,mcp__atlassian__jira_get_issue,mcp__atlassian__jira_create_issue,mcp__atlassian__jira_update_issue,mcp__atlassian__jira_add_comment,mcp__atlassian__jira_create_issue_link,mcp__atlassian__jira_get_link_types")
+
+### API Operations
+
+**Search issues (JQL):**
+```bash
+curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Accept: application/json" \
+     "$JIRA_URL/rest/api/2/search?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
 ```
 
-If the select query returns no matches, try a broader search:
-
+**Get issue with all fields:**
+```bash
+curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Accept: application/json" \
+     "$JIRA_URL/rest/api/2/issue/<KEY>"
 ```
-ToolSearch("+atlassian", 20)
+
+**Get issue comments:**
+```bash
+curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Accept: application/json" \
+     "$JIRA_URL/rest/api/2/issue/<KEY>/comment"
 ```
 
-Do NOT search for tools using generic keywords like "jira" -- that will not find
-MCP tools. Do NOT write Python scripts or curl commands to access the Jira API.
-Do NOT ask the user to configure credentials. The tools are provided by the
-platform integration.
+**Create issue:**
+```bash
+curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     -d '{"fields": {...}}' \
+     "$JIRA_URL/rest/api/2/issue"
+```
+
+**Update issue:**
+```bash
+curl -s -X PUT -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     "$JIRA_URL/rest/api/2/issue/<KEY>" \
+     -d '{"fields": {...}}'
+```
+
+**Add comment:**
+```bash
+curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"body": "comment text"}' \
+     "$JIRA_URL/rest/api/2/issue/<KEY>/comment"
+```
+
+**Get link types:**
+```bash
+curl -s -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Accept: application/json" \
+     "$JIRA_URL/rest/api/2/issueLinkType"
+```
+
+**Create issue link:**
+```bash
+curl -s -X POST -H "Authorization: Bearer $JIRA_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"type": {"name": "Blocks"}, "inwardIssue": {"key": "..."}, "outwardIssue": {"key": "..."}}' \
+     "$JIRA_URL/rest/api/2/issueLink"
+```
+
+### Important Notes
+
+- Always URL-encode JQL query strings
+- Use `jq` to parse JSON responses when needed
+- For large JSON payloads (issue creation), use a heredoc: `curl ... -d "$(cat <<'EOF' ... EOF)"`
+- Check HTTP status codes: 201 = created, 200 = ok, 204 = updated
+- Do NOT ask the user to configure credentials -- they are provided by the platform
 
 ## Jira Configuration
 
-- **Instance**: https://issues.redhat.com (Cloud: redhat.atlassian.net)
+- **Instance**: Value of `$JIRA_URL` environment variable
 - **Project key**: GCP
 - **Contact**: asegundo@redhat.com
 
