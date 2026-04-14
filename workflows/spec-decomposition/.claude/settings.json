@@ -7,13 +7,13 @@
       "Grep",
       "Bash(ls)",
       "Bash(date)",
-      "mcp__atlassian__jira_search",
-      "mcp__atlassian__jira_get_issue",
-      "mcp__atlassian__jira_create_issue",
-      "mcp__atlassian__jira_update_issue",
-      "mcp__atlassian__jira_add_comment",
-      "mcp__atlassian__jira_create_issue_link",
-      "mcp__atlassian__jira_get_link_types"
+      "mcp__plugin_atlassian_atlassian__jira_search",
+      "mcp__plugin_atlassian_atlassian__jira_get_issue",
+      "mcp__plugin_atlassian_atlassian__jira_create_issue",
+      "mcp__plugin_atlassian_atlassian__jira_update_issue",
+      "mcp__plugin_atlassian_atlassian__jira_add_comment",
+      "mcp__plugin_atlassian_atlassian__jira_create_issue_link",
+      "mcp__plugin_atlassian_atlassian__jira_get_link_types"
     ]
   },
   "extraKnownMarketplaces": {
