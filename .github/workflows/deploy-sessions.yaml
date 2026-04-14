@@ -3,6 +3,8 @@ name: Deploy Scheduled Sessions to ACP
 on:
   push:
     branches: [main]
+    paths:
+    - 'scheduled-sessions/*.json'
   workflow_dispatch:
     inputs:
       session_file:
