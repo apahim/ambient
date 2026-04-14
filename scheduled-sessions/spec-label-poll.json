@@ -1,5 +1,5 @@
 {
-  "schedule": "*/20 * * * *",
+  "schedule": "*/30 * * * *",
   "displayName": "GCP HCP Spec Agent Label Poll",
   "suspend": false,
   "reuseLastSession": false,
