@@ -1,5 +1,5 @@
 {
-  "schedule": "0 14 * * 5",
+  "schedule": "0 10 * * 5",
   "displayName": "GCP HCP Weekly Status Rollup",
   "suspend": false,
   "reuseLastSession": false,
