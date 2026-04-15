@@ -30,14 +30,13 @@ environment variable. Do NOT hardcode tokens or ask the user for credentials.
 
 ### Authentication
 
-All requests use bearer token auth against `https://issues.redhat.com`.
-Always use `curl -sL` (follow redirects — the server may 301 to `redhat.atlassian.net`):
+All requests use bearer token auth against `https://redhat.atlassian.net`:
 
 ```bash
-curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/2/..."
+     "https://redhat.atlassian.net/rest/api/2/..."
 ```
 
 ### API Operations
@@ -45,71 +44,70 @@ curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 **Search issues (JQL)** — uses the v3 endpoint (v2 `/search` has been removed).
 Use `curl -G --data-urlencode` to avoid shell quoting issues with JQL:
 ```bash
-curl -sL -G -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -G -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      --data-urlencode 'jql=project = GCP AND labels = "agent:spec" ORDER BY key ASC' \
      --data-urlencode 'maxResults=1' \
      --data-urlencode 'fields=key,summary,issuetype,labels' \
-     "https://issues.redhat.com/rest/api/3/search/jql"
+     "https://redhat.atlassian.net/rest/api/3/search/jql"
 ```
 
 **Get issue with all fields:**
 ```bash
-curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/2/issue/<KEY>"
+     "https://redhat.atlassian.net/rest/api/2/issue/<KEY>"
 ```
 
 **Get issue comments:**
 ```bash
-curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
+     "https://redhat.atlassian.net/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Create issue:**
 ```bash
-curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d '{"fields": {...}}' \
-     "https://issues.redhat.com/rest/api/2/issue"
+     "https://redhat.atlassian.net/rest/api/2/issue"
 ```
 
 **Update issue:**
 ```bash
-curl -sL -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
-     "https://issues.redhat.com/rest/api/2/issue/<KEY>" \
+     "https://redhat.atlassian.net/rest/api/2/issue/<KEY>" \
      -d '{"fields": {...}}'
 ```
 
 **Add comment:**
 ```bash
-curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"body": "comment text"}' \
-     "https://issues.redhat.com/rest/api/2/issue/<KEY>/comment"
+     "https://redhat.atlassian.net/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Get link types:**
 ```bash
-curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/2/issueLinkType"
+     "https://redhat.atlassian.net/rest/api/2/issueLinkType"
 ```
 
 **Create issue link:**
 ```bash
-curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"type": {"name": "Blocks"}, "inwardIssue": {"key": "..."}, "outwardIssue": {"key": "..."}}' \
-     "https://issues.redhat.com/rest/api/2/issueLink"
+     "https://redhat.atlassian.net/rest/api/2/issueLink"
 ```
 
 ### Important Notes
 
-- Always use `curl -sL` — the `-L` flag follows 301 redirects from `issues.redhat.com` to `redhat.atlassian.net`
 - The search endpoint MUST use `/rest/api/3/search/jql` (the v2 `/rest/api/2/search` has been removed by Atlassian)
 - Other endpoints (issue CRUD, comments, links) still work on `/rest/api/2/`
 - For JQL queries, ALWAYS use `curl -G --data-urlencode 'jql=...'` — do NOT manually URL-encode or use `echo | jq @uri` (shell quoting around labels like `"agent:spec"` breaks silently)
@@ -120,7 +118,7 @@ curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 ## Jira Configuration
 
-- **Instance**: https://issues.redhat.com
+- **Instance**: https://redhat.atlassian.net
 - **Project key**: GCP
 - **Contact**: asegundo@redhat.com
 
