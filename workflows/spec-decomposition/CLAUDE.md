@@ -42,11 +42,15 @@ curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 ### API Operations
 
-**Search issues (JQL)** — uses the v3 endpoint (v2 `/search` has been removed):
+**Search issues (JQL)** — uses the v3 endpoint (v2 `/search` has been removed).
+Use `curl -G --data-urlencode` to avoid shell quoting issues with JQL:
 ```bash
-curl -sL -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -sL -G -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
-     "https://issues.redhat.com/rest/api/3/search/jql?jql=<URL-encoded-JQL>&maxResults=1&fields=key,summary,issuetype,labels"
+     --data-urlencode 'jql=project = GCP AND labels = "agent:spec" ORDER BY key ASC' \
+     --data-urlencode 'maxResults=1' \
+     --data-urlencode 'fields=key,summary,issuetype,labels' \
+     "https://issues.redhat.com/rest/api/3/search/jql"
 ```
 
 **Get issue with all fields:**
@@ -108,7 +112,7 @@ curl -sL -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 - Always use `curl -sL` — the `-L` flag follows 301 redirects from `issues.redhat.com` to `redhat.atlassian.net`
 - The search endpoint MUST use `/rest/api/3/search/jql` (the v2 `/rest/api/2/search` has been removed by Atlassian)
 - Other endpoints (issue CRUD, comments, links) still work on `/rest/api/2/`
-- Always URL-encode JQL query strings
+- For JQL queries, ALWAYS use `curl -G --data-urlencode 'jql=...'` — do NOT manually URL-encode or use `echo | jq @uri` (shell quoting around labels like `"agent:spec"` breaks silently)
 - Use `jq` to parse JSON responses when needed
 - For large JSON payloads (issue creation), use a heredoc: `curl ... -d "$(cat <<'EOF' ... EOF)"`
 - Check HTTP status codes: 201 = created, 200 = ok, 204 = updated
