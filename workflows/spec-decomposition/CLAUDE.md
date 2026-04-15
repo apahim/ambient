@@ -19,7 +19,8 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 - Do NOT assign issues, move them to sprints, or transition statuses
 - Do NOT modify existing issues (only create new child issues)
 - Do NOT push code to any repository
-- All created issues MUST have label `ai-generated-jira` and security `{"name": "Red Hat Employee"}`
+- All created issues MUST have label `ai-generated-jira` and security `{"id": "10034"}` (Red Hat Employee)
+- Do NOT create test/throwaway issues to discover fields — use the field IDs documented below
 - Use Jira wiki markup (`h2.`, `*`, `{code}`), NOT markdown (`##`, `-`, `` ``` ``)
 
 ## Jira REST API
@@ -128,10 +129,60 @@ curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
 
 | Field | ID | Type |
 |-------|----|------|
-| Story Points | `customfield_12310243` | float |
-| Epic Link | `customfield_12311140` | string (Epic key) |
-| Epic Name | `customfield_12311141` | string |
-| Parent Link | `customfield_12313140` | string (parent key) |
+| Story Points | `customfield_10028` | float |
+| Epic Link | `customfield_10014` | string (Epic key) |
+| Epic Name | `customfield_10011` | string |
+
+### Security Level
+
+Always use `"security": {"id": "10034"}` (Red Hat Employee). Do NOT use `{"name": "..."}` — it returns a validation error on this instance.
+
+### Create Story Example
+
+```bash
+curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     "https://redhat.atlassian.net/rest/api/2/issue" \
+     -d "$(cat <<'EOF'
+{
+  "fields": {
+    "project": {"key": "GCP"},
+    "issuetype": {"name": "Story"},
+    "summary": "Story title here",
+    "description": "h2. User Story\n\n...",
+    "labels": ["ai-generated-jira"],
+    "security": {"id": "10034"},
+    "customfield_10014": "GCP-246",
+    "customfield_10028": 3.0
+  }
+}
+EOF
+)"
+```
+
+### Create Epic Example
+
+```bash
+curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     "https://redhat.atlassian.net/rest/api/2/issue" \
+     -d "$(cat <<'EOF'
+{
+  "fields": {
+    "project": {"key": "GCP"},
+    "issuetype": {"name": "Epic"},
+    "summary": "Epic title here",
+    "description": "h2. Use Case / Context\n\n...",
+    "labels": ["ai-generated-jira"],
+    "security": {"id": "10034"},
+    "customfield_10011": "Epic title here"
+  }
+}
+EOF
+)"
+```
 
 ## Template References
 
@@ -148,18 +199,18 @@ Read these files from the gcp-hcp repo before decomposing:
 **Every Epic (created from Feature) MUST have:**
 - [ ] Summary: [Action Verb] + [Specific Capability or Component]
 - [ ] Description in Jira wiki markup following epic template (Use Case, Current/Desired State, Scope, Dependencies, AC)
-- [ ] Epic Name (`customfield_12311141`)
+- [ ] Epic Name (`customfield_10011`) — same value as summary
 - [ ] Label: `ai-generated-jira`
-- [ ] Security: `{"name": "Red Hat Employee"}`
-- [ ] Parent Link to Feature (`customfield_12313140`)
+- [ ] Security: `{"id": "10034"}`
+- [ ] Link to parent Feature via issue link (Blocks or Related)
 
 **Every Story (created from Epic) MUST have:**
 - [ ] Summary: action-oriented title
 - [ ] Description in Jira wiki markup with: User Story, Context, Requirements, Technical Approach, Dependencies, AC
-- [ ] Story points (Fibonacci: 1, 2, 3, 5 -- split if 8+)
+- [ ] Story points (`customfield_10028`) as float (Fibonacci: 1, 2, 3, 5 -- split if 8+)
 - [ ] Label: `ai-generated-jira`
-- [ ] Security: `{"name": "Red Hat Employee"}`
-- [ ] Epic Link to parent Epic (`customfield_12311140`)
+- [ ] Security: `{"id": "10034"}`
+- [ ] Epic Link (`customfield_10014`) set to parent Epic key
 - [ ] Component if identifiable (mapped from cross-repo map)
 
 ## Label Swap Procedure
