@@ -24,27 +24,29 @@ Features into Epics, Epics into Stories. Then swap the label to `agent:spec:done
 
 ## Jira REST API
 
-Jira access uses direct REST API calls via `curl` with bearer token
-authentication. The token is provided by the `JIRA_PERSONAL_TOKEN`
-environment variable. Do NOT hardcode tokens or ask the user for credentials.
+Jira access uses direct REST API calls via `curl` with Basic authentication.
+Credentials are provided by environment variables `JIRA_USERNAME` (email) and
+`JIRA_PERSONAL_TOKEN` (API token). Do NOT hardcode tokens or ask the user for credentials.
 
 ### Authentication
 
-All requests use bearer token auth against `https://redhat.atlassian.net`:
+All requests use `curl -u` for Basic auth against `https://redhat.atlassian.net`:
 
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      "https://redhat.atlassian.net/rest/api/2/..."
 ```
+
+**IMPORTANT**: Use `-u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN"` (Basic auth), NOT `Authorization: Bearer` (which returns 403 on Atlassian Cloud).
 
 ### API Operations
 
 **Search issues (JQL)** — uses the v3 endpoint (v2 `/search` has been removed).
 Use `curl -G --data-urlencode` to avoid shell quoting issues with JQL:
 ```bash
-curl -s -G -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -G -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      --data-urlencode 'jql=project = GCP AND labels = "agent:spec" ORDER BY key ASC' \
      --data-urlencode 'maxResults=1' \
@@ -54,21 +56,21 @@ curl -s -G -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Get issue with all fields:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://redhat.atlassian.net/rest/api/2/issue/<KEY>"
 ```
 
 **Get issue comments:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://redhat.atlassian.net/rest/api/2/issue/<KEY>/comment"
 ```
 
 **Create issue:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -H "Accept: application/json" \
      -d '{"fields": {...}}' \
@@ -77,7 +79,7 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Update issue:**
 ```bash
-curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X PUT -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      "https://redhat.atlassian.net/rest/api/2/issue/<KEY>" \
      -d '{"fields": {...}}'
@@ -85,7 +87,7 @@ curl -s -X PUT -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Add comment:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"body": "comment text"}' \
      "https://redhat.atlassian.net/rest/api/2/issue/<KEY>/comment"
@@ -93,14 +95,14 @@ curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
 
 **Get link types:**
 ```bash
-curl -s -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Accept: application/json" \
      "https://redhat.atlassian.net/rest/api/2/issueLinkType"
 ```
 
 **Create issue link:**
 ```bash
-curl -s -X POST -H "Authorization: Bearer $JIRA_PERSONAL_TOKEN" \
+curl -s -X POST -u "$JIRA_USERNAME:$JIRA_PERSONAL_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"type": {"name": "Blocks"}, "inwardIssue": {"key": "..."}, "outwardIssue": {"key": "..."}}' \
      "https://redhat.atlassian.net/rest/api/2/issueLink"
