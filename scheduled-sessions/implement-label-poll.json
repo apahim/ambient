@@ -1,0 +1,43 @@
+{
+  "schedule": "0 10 * * *",
+  "displayName": "GCP HCP Implementation Agent Label Poll",
+  "suspend": false,
+  "reuseLastSession": false,
+  "sessionTemplate": {
+    "initialPrompt": "Run the implementation workflow.",
+    "displayName": "Implementation Agent Poll",
+    "llmSettings": {
+      "model": "claude-sonnet-4-5",
+      "temperature": 0,
+      "maxTokens": 65536
+    },
+    "timeout": 3600,
+    "inactivityTimeout": 600,
+    "stopOnRunFinished": true,
+    "repos": [
+      {
+        "url": "https://github.com/apahim/ambient",
+        "branch": "main",
+        "autoPush": false
+      },
+      {
+        "url": "https://github.com/apahim/gcp-hcp",
+        "branch": "ai-sdlc",
+        "autoPush": false
+      }
+    ],
+    "activeWorkflow": {
+      "gitUrl": "https://github.com/apahim/ambient",
+      "branch": "main",
+      "path": "workflows/implementation"
+    },
+    "environmentVariables": {
+      "JIRA_EMAIL": "asegundo@redhat.com"
+    },
+    "labels": {
+      "team": "gcp-hcp",
+      "stage": "2",
+      "activity": "implementation"
+    }
+  }
+}

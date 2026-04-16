@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(jira)",
+      "Skill(gcp-hcp-architecture)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(ls)",
+      "Bash(date)",
+      "Bash(curl:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(cd:*)",
+      "Bash(make:*)",
+      "Bash(go:*)",
+      "Bash(python:*)",
+      "Bash(ruff:*)",
+      "Bash(terraform:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(jq:*)",
+      "Bash(echo:*)",
+      "Bash(tr:*)",
+      "Bash(sed:*)",
+      "Bash(cut:*)"
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "openshift-ai-helpers": {
+      "source": {
+        "source": "github",
+        "repo": "openshift-eng/ai-helpers"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "jira@ai-helpers": true
+  }
+}
